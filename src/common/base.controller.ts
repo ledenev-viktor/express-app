@@ -1,14 +1,16 @@
-import { LoggerService } from "../logger/logger.service";
 import { Response, Router } from "express";
+import { LoggerService } from "../logger/logger.service";
 import { IControllerRoute } from "./route.interface";
+export { Router } from "express";
 
 export abstract class BaseController {
   private readonly _router: Router;
+
   constructor(private logger: LoggerService) {
     this._router = Router();
   }
 
-  get() {
+  get router() {
     return this._router;
   }
 
@@ -27,10 +29,9 @@ export abstract class BaseController {
 
   protected bindRoutes(routes: IControllerRoute[]) {
     for (const route of routes) {
-      this.logger.log(`[${route.method}]: ${route.path}`);
-
+      this.logger.log(`[${route.method}] ${route.path}`);
       const handler = route.func.bind(this);
-      this._router[route.method](route.path, handler);
+      this.router[route.method](route.path, handler);
     }
   }
 }
